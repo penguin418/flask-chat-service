@@ -1,25 +1,52 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"/>
-
     <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <!-- Popper JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
 
     <!-- socket io -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+
+    <!--CDN 링크 -->
   </head>
   <body>
+    <div class="container">
+      <!-- 메시지 리스트 // message list -->
+      <div id="messages"></div>
+      <!-- 메시지 입력 // message input -->
+      <input id="message" type="text" name="message"/>
+        <button id="send" type="submit">send</button>
+    </div>
+
     <script>
+      // 유저 // user
+      user = Math.floor(Math.random() * 100).toString();
       socket = io.connect("http://" + document.domain + ":" + location.port);
+
       socket.on("connect", () => {
-       alert("connected");
+        console.log("connected");
+      });
+
+      socket.on("disconnect", () => {
+        console.log("disconnected");
+      });
+
+      socket.on("broadcast msg", (data) => {
+        // 메시지 확인 // chech message
+        console.log("received", data);
+        $("#messages").append($("<p>" + JSON.stringify(data) +  "</p>"));
+      });
+
+      $("#send").click(function (e) {
+        let data = {
+          message: $("#message").val(),
+          user: user
+        };
+        // 전송 // send
+        socket.emit("send msg", data);
+        // 정리 // clear
+        $("#message").val("");
+        return false;
       });
     </script>
   </body>

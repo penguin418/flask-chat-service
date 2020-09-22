@@ -14,17 +14,22 @@
       <!-- 메시지 리스트 // message list -->
       <div id="messages"></div>
       <!-- 메시지 입력 // message input -->
-      <input id="message" type="text" name="message"/>
-        <button id="send" type="submit">send</button>
+      
+      <form id="send-form" action="#">
+        <input id="message" type="text" name="message"/>
+          <button id="send" type="submit">send</button>
+      </form>
     </div>
 
     <script>
-      // 유저 // user
+      // 유저, 룸 // user, room
       user = Math.floor(Math.random() * 100).toString();
+      room = "1";
       socket = io.connect("http://" + document.domain + ":" + location.port);
 
       socket.on("connect", () => {
         console.log("connected");
+        socket.emit("subscribe", { room: room });
       });
 
       socket.on("disconnect", () => {
@@ -37,13 +42,14 @@
         $("#messages").append($("<p>" + JSON.stringify(data) +  "</p>"));
       });
 
-      $("#send").click(function (e) {
-        let data = {
+      $("#send-form").submit(function (e) {
+        let form_data = {
           message: $("#message").val(),
-          user: user
+          room: room,
+          user: user,
         };
         // 전송 // send
-        socket.emit("send msg", data);
+        socket.emit("send msg", form_data);
         // 정리 // clear
         $("#message").val("");
         return false;

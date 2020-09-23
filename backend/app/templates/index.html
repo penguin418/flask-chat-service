@@ -1,30 +1,51 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 
     <!-- socket io -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 
+    <!-- font awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <!--CDN 링크 -->
   </head>
   <body>
     <div class="container">
-      <!-- 메시지 리스트 // message list -->
-      <div id="messages"></div>
+        <!-- 메시지 리스트 // message list -->
+      <div class="row chats" id="messages">
+        <div class="col-12 d-none px-3 py-1 flex-grow-1" id="message-template">
+          <button class="btn btn-primary float-left">my message</button>
+          <small class="float-left p-2">hello</small>
+        </div>
+      </div>
       <!-- 메시지 입력 // message input -->
-      
-      <form id="send-form" action="#">
-        <input id="message" type="text" name="message"/>
-          <button id="send" type="submit">send</button>
+      <form id="send-form" action="#" class="input-group mb-3">
+        <input id="message" type="text" name="message" class="form-control" />
+        <div class="input-group-append">
+          <button class="input-group-text" id="send" type="submit">send</button>
+        </div>
       </form>
     </div>
 
     <script>
-      // 유저, 룸 // user, room
-      user = Math.floor(Math.random() * 100).toString();
       room = "1";
+      user = Math.floor(Math.random() * 100).toString();
       socket = io.connect("http://" + document.domain + ":" + location.port);
 
       socket.on("connect", () => {
@@ -38,18 +59,28 @@
 
       socket.on("broadcast msg", (data) => {
         // 메시지 확인 // chech message
-        console.log("received", data);
-        $("#messages").append($("<p>" + JSON.stringify(data) +  "</p>"));
+        console.log("RECV", data);
+        var msg = data.message
+        var msg_time = new Date(Number(data.timestamp) * 1000)
+        var msg_position = data["user"] == user ? "float-right" : "";
+        // 메시지를 ui로 출력 // display new message in the ui
+        var btn = $("#message-template")
+          .clone()
+          .attr("id", "new-message")
+          .removeClass("d-none")
+          .appendTo("#messages");
+        btn.find("button").text(msg).addClass(msg_position);
+        btn.find("small").text(msg_time).addClass(msg_position);
       });
 
       $("#send-form").submit(function (e) {
-        let form_data = {
+        let data = {
           message: $("#message").val(),
           room: room,
           user: user,
         };
         // 전송 // send
-        socket.emit("send msg", form_data);
+        socket.emit("send msg", data);
         // 정리 // clear
         $("#message").val("");
         return false;

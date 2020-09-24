@@ -7,11 +7,11 @@ from time import time
 authorized = ['1', '2', '3']
 
 @mod_chat.route('/<room_id>')
-def chatroom(room_id):
+def room(room_id):
     # 가입된 방인지 확인 // check if user can enter the room
     if room_id not in authorized:
         return redirect('/')
-    return render_template('chatroom.html', room_id=room_id)
+    return render_template('chat-room.html', room_id=room_id)
 
 @io.on('subscribe')
 def join(data):

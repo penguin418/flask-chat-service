@@ -1,3 +1,6 @@
+## how to run current version?
+localhost:5000/chat/<chatroom_id>
+
 # socketio - flask 연습
 
 ## 개요

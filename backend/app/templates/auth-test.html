@@ -6,12 +6,33 @@
   </head>
   <body>
     <div><button id="db">db</button></div>
+    <div><button id="register">REGISTER</button></div>
     <script>
       $("#db").click(function () {
         $.ajax({
           url: "/auth/db",
           type: "POST",
           data: JSON.stringify({ test: "test" }),
+          contentType: "application/json",
+          dataType: "json",
+          success: function (data) {
+            console.log(data);
+          },
+          error: function(xhr, status, err){
+            console.log(xhr.responseJSON)
+          }
+        });
+      });
+      
+      $("#register").click(function () {
+        $.ajax({
+          url: "/auth/register",
+          type: "POST",
+          data: JSON.stringify({
+            username: "uesr",
+            password: "pass",
+            email: "a@b.com",
+          }),
           contentType: "application/json",
           dataType: "json",
           success: function (data) {

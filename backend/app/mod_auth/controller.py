@@ -16,8 +16,12 @@ def dbtest():
 
     return jsonify({'success': 'success'}), 200
 
-@mod_auth.route('/register', methods=['POST'])
+@mod_auth.route('/register', methods=['GET','POST'])
 def register():
+    if request.method == 'GET':
+        return render_template('auth-register.html')
+
+    # post 처리
     if not request.is_json:
         return jsonify({"error": "요청은 json이어야 합니다 // request should be JSON"}), 400
     

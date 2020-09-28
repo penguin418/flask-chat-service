@@ -7,6 +7,7 @@
   <body>
     <div><button id="db">db</button></div>
     <div><button id="register">REGISTER</button></div>
+    <div><button id="login">LOGIN</button></div>
     <script>
       $("#db").click(function () {
         $.ajax({
@@ -18,12 +19,12 @@
           success: function (data) {
             console.log(data);
           },
-          error: function(xhr, status, err){
-            console.log(xhr.responseJSON)
-          }
+          error: function (xhr, status, err) {
+            console.log(xhr.responseJSON);
+          },
         });
       });
-      
+
       $("#register").click(function () {
         $.ajax({
           url: "/auth/register",
@@ -38,9 +39,24 @@
           success: function (data) {
             console.log(data);
           },
-          error: function(xhr, status, err){
-            console.log(xhr.responseJSON)
-          }
+          error: function (xhr, status, err) {
+            console.log(xhr.responseJSON);
+          },
+        });
+        $("#login").click(function () {
+          $.ajax({
+            url: "/auth/login",
+            type: "POST",
+            data: JSON.stringify({ password: "pass", email: "a@b.com" }),
+            contentType: "application/json",
+            dataType: "json",
+            success: function (data) {
+              console.log(data);
+            },
+            error: function (xhr, status, err) {
+              console.log(xhr.responseJSON);
+            },
+          });
         });
       });
     </script>

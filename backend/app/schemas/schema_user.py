@@ -2,7 +2,7 @@ from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 from jsonschema.exceptions import SchemaError
 
-user_schema = {
+register_schema = {
     "type": "object",
     "properties": {
         "email": {
@@ -22,10 +22,36 @@ user_schema = {
     "additionalProperties": False
 }
 
+login_schema = {
+    "type": "object",
+    "properties": {
+        "email": {
+            "type": "string",
+            "format": "email"
+        },
+        "password": {
+            "type": "string",
+            "minLength": 1
+        }
+    },
+    "required": ["email", "password"],
+    "additionalProperties": False
+}
 
-def validate_user(data):
+
+def validate_user_register(data):
     try:
-        validate(data, user_schema)
+        validate(data, register_schema)
+    except ValidationError as e:
+        return False, e
+    except SchemaError as e:
+        return False, e
+    return True, data
+
+
+def validate_user_login(data):
+    try:
+        validate(data, login_schema)
     except ValidationError as e:
         return False, e
     except SchemaError as e:

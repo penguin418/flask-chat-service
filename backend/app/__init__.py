@@ -2,7 +2,10 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO
 from flask_pymongo import PyMongo
-
+from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
+import json
+import datetime
 
 socketio = SocketIO()
 app = None
@@ -18,6 +21,19 @@ def create_app(debug=False):
     app.config['MONGO_AUTH_SOURCE'] = 'admin'
     mongo = PyMongo(app)
     app.db = mongo.db
+
+    # jwt인증 // jwt
+    app.config['JWT_SECRET_KEY'] = 'changelater'
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
+    app.config['JWT_COOKIE_SECURE'] = False # false allow http
+    app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+    app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
+    app.config['JWT_REFRESH_COOKIE_PATH'] = '/'
+    app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+    JWT_COOKIE_CSRF_PROTECT = True 
+    flask_bcrypt = Bcrypt(app)
+    app.json_encoder = json.JSONEncoder
+    jwt = JWTManager(app)
 
     @app.route('/')
     def index():

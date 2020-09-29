@@ -26,13 +26,6 @@ def dbtest():
 def test():
     return render_template('auth-test.html')
 
-@mod_auth.route('/protected')
-@jwt_required
-def protected():
-    jwt = get_jwt_identity()
-    print(jwt)
-    return render_template('auth-protected.html')
-
 @mod_auth.route('/register', methods=['GET''POST'])
 def register():
     if request.method == 'GET':

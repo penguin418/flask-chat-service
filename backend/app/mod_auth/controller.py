@@ -53,8 +53,12 @@ def register():
     else:
         return jsonify({'error': str(data)}), 400
 
-@mod_auth.route('/login', methods=['POST'])
+@mod_auth.route('/login', methods=['GET', 'POST'])
 def login():
+    if request.method == 'GET':
+        return render_template('auth-login.html')
+
+    # post 처리
     if not request.is_json:
         return jsonify({"login": False, "error": "요청은 json이어야 합니다 // request should be JSON"}), 400
     success, data = validate_login(request.get_json())

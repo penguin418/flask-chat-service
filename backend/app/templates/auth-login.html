@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+
+    <!-- jQuery cookie library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col mx-auto" style="max-width: 18rem">
+          <h3>LOGIN</h3>
+          <form id="login-form" action="#">
+            <div class="form-group">
+              <label>email</label>
+              <input
+                class="form-control"
+                name="email"
+                type="email"
+                placeholder="email@example.com"
+              />
+            </div>
+            <div class="form-group">
+              <label>password</label>
+              <input
+                class="form-control"
+                name="password"
+                type="password"
+                placeholder="password"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary">Sign in</button>
+          </form>
+          <a href="/auth/register">sign up here</a>
+        </div>
+      </div>
+    </div>
+    <script>
+      $("#login-form").submit(function (e) {
+        let formData = $("#login-form")
+          .serializeArray()
+          .reduce((obj, field) => {
+            obj[field.name] = field.value;
+            return obj;
+          }, {});
+
+        // 전송 // send
+        $.ajax({
+          url: "/auth/login",
+          type: "POST",
+          data: JSON.stringify(formData),
+          contentType: "application/json",
+          dataType: "json",
+          success: function (data) {
+            $.cookie("access_csrf", data["access_csrf"], { expires: 1 });
+            $.cookie("refresh_csrf", data["refresh_csrf"], { expires: 1 });
+            location.href = '/'
+          },
+          error: function (xhr, status, err) {
+            console.log(xhr.responseJSON);
+          },
+        });
+        // 정리 // clear
+        $("#login-form").trigger("reset");
+        return false;
+      });
+    </script>
+  </body>
+</html>

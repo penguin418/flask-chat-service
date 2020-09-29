@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+    
+    <!-- jQuery cookie library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+  </head>
+  <body>
+    <div><button id="db">db</button></div>
+    <div><button id="register">REGISTER</button></div>
+    <div><button id="login">LOGIN</button></div>
+    <div><button id="logout">LOGOUT</button></div>
+    <div><a href="/auth/protected">protected</a></div>
+    <script>
+      $("#db").click(function () {
+        $.ajax({
+          url: "/auth/db",
+          type: "POST",
+          data: JSON.stringify({ test: "test" }),
+          // contentType: "application/json",
+          // dataType: "json",
+          success: function (data) {
+            console.log(data);
+          },
+          error: function(xhr, status, err){
+            console.log(xhr.responseJSON)
+          }
+        });
+      });
+      $("#register").click(function () {
+        $.ajax({
+          url: "/auth/register",
+          type: "POST",
+          data: JSON.stringify({
+            username: "uesr",
+            password: "pass",
+            email: "a@b.com",
+          }),
+          contentType: "application/json",
+          dataType: "json",
+          success: function (data) {
+            console.log(data);
+          },
+          error: function(xhr, status, err){
+            console.log(xhr.responseJSON)
+          }
+        });
+      });
+      $("#login").click(function () {
+        $.ajax({
+          url: "/auth/login",
+          type: "POST",
+          data: JSON.stringify({ password: "pass", email: "a@b.com" }),
+          contentType: "application/json",
+          dataType: "json",
+          success: function (data) {
+            console.log(data);
+            $.cookie('access_csrf', data['access_csrf'], {expires: 1});
+            $.cookie('refresh_csrf', data['refresh_csrf'],{expires: 1});
+          },
+          error: function(xhr, status, err){
+            console.log(xhr.responseJSON)
+          }
+        });
+      });
+      $("#logout").click(function () {
+        $.ajax({
+          url: "/auth/logout",
+          type: "POST",
+          success: function (data) {
+            console.log(data);
+          },
+          error: function(xhr, status, err){
+            console.log(xhr.responseJSON)
+            $.removeCookie('access_token_cookie');
+            $.removeCookie('refresh_token_cookie');
+            $.removeCookie('access_csrf');
+            $.removeCookie('refresh_csrf');
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

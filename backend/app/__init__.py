@@ -11,26 +11,24 @@ socketio = SocketIO()
 app = None
 
 
-def create_app(debug=False):
+def create_app(configs = [], debug=False):
     global app
     app = Flask(__name__)
-    app.debug = debug
-    
-    # mongodb 설정 // mongodb setting
-    app.config["MONGO_URI"] = "mongodb://root:changelater@192.168.99.100:27017/test?authSource=admin"
-    app.config['MONGO_AUTH_SOURCE'] = 'admin'
+    for config in configs:
+        app.config.update(config)
+    app.debug = app.config['debug']
+
+    app.config['MONGO_URI'] = 'mongodb://%s:%s@%s:%s/%s?authSource=%s' % (
+        app.config['MONGO_USERNAME'],
+        app.config['MONGO_PASSWORD'],
+        app.config['MONGO_HOST'],
+        app.config['MONGO_PORT'],
+        app.config['MONGO_DBNAME'],
+        app.config['MONGO_AUTH_SOURCE']
+    )
     mongo = PyMongo(app)
     app.db = mongo.db
 
-    # jwt인증 // jwt
-    app.config['JWT_SECRET_KEY'] = 'changelater'
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(days=1)
-    app.config['JWT_COOKIE_SECURE'] = False # false allow http
-    app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-    app.config['JWT_ACCESS_COOKIE_PATH'] = '/'
-    app.config['JWT_REFRESH_COOKIE_PATH'] = '/'
-    app.config['JWT_COOKIE_CSRF_PROTECT'] = True
-    JWT_COOKIE_CSRF_PROTECT = True 
     flask_bcrypt = Bcrypt(app)
     app.json_encoder = json.JSONEncoder
     jwt = JWTManager(app)

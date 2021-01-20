@@ -17,7 +17,7 @@ def create_app(debug=False):
     app.debug = debug
     
     # mongodb 설정 // mongodb setting
-    app.config["MONGO_URI"] = "mongodb://root:changelater@192.168.99.100:27017/test?authSource=admin"
+    app.config["MONGO_URI"] = "mongodb://root:changelater@localhost:27017/test?authSource=admin"
     app.config['MONGO_AUTH_SOURCE'] = 'admin'
     mongo = PyMongo(app)
     app.db = mongo.db

@@ -1,0 +1,9 @@
+{
+    "debug": false,
+    "MONGO_HOST": "",
+    "MONGO_PORT": "",
+    "MONGO_DBNAME": "",
+    "MONGO_USERNAME": "",
+    "MONGO_PASSWORD": "",
+    "MONGO_AUTH_SOURCE": ""
+}

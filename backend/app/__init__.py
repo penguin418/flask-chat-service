@@ -6,14 +6,16 @@ from flask_jwt_extended import JWTManager
 from flask_bcrypt import Bcrypt
 import json
 import datetime
+from flask_restful import Api
 
 socketio = SocketIO()
 app = None
-
+api = None
 
 def create_app(configs = [], debug=False):
     global app
     app = Flask(__name__)
+    api = Api(app)
     for config in configs:
         app.config.update(config)
     app.debug = app.config['debug']
@@ -42,8 +44,16 @@ def create_app(configs = [], debug=False):
     
     from .mod_auth import mod_auth as auth
     app.register_blueprint(auth)
-    
+
+    # from .mod_friend import mod_friend as friend
+    # app.register_blueprint(friend)
+
+
     socketio.init_app(app)
+
+    from .mod_friend import FriendsAPI as friendsAPI
+    api.add_resource(friendsAPI, '/friends')
+
     return app
     
     

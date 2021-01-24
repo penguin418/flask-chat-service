@@ -36,7 +36,8 @@ def signup():
     if not request.is_json:
         return jsonify({"error": "요청은 json이어야 합니다 // request should be JSON"}), 400  # Bad Request
 
-    success, data = validate_register(request.get_json())
+    data = request.get_json()
+    success, data = validate_register(data)
     if not success:
         return jsonify({'error': str(data)}), 400
 
@@ -63,15 +64,14 @@ def login():
 
     if not success:
         return jsonify({"login": False, 'error': str(data)}), 400
-    print("data=", data)
     user = app.db['users'].find_one({'email': data['email']})
-    print("user=", user)
     if not user or not flask_bcrypt.check_password_hash(user['password'], data['password']):
         return jsonify({"login": False, 'error': '없거나 틀린 비밀번호입니다 // invalid password'}), 401
 
     # 올바른 아이디, 패스워드
     del data['password']
-
+    # id추가
+    data['friend_id'] = str(user['_id'])
     # 쿠키 지정
     access_token = create_access_token(identity=data)
     refresh_token = create_refresh_token(identity=data)

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <link
-      rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
     />
 
     <!-- jQuery library -->
@@ -20,59 +20,43 @@
 
     <!-- font awesome -->
     <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
-      rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css"
+            rel="stylesheet"
     />
     <style>
-      html,
-      body {
-        height: 100%;
-      }
-      .container-fluid {
-        height: 100%;
-        overflow-y: hidden; /* don't show content that exceeds my height */
-      }
+        html,
+        body {
+            height: 100%;
+        }
+
+        .container-fluid {
+            height: 100%;
+            overflow-y: hidden; /* don't show content that exceeds my height */
+        }
     </style>
-  </head>
-  <body>
-    <div class="container-fluid flex-grow-1 d-flex ">
-      <div class="row flex-fill flex-sm-row">
-        <div class="flex-wrap card pt-5 sidebar">
-          <div class="list-group text-center text-md-left" role="tablist">
-            <a
-              href="#tab-friends"
-              class="list-group-item list-group-item-action border-0"
-              data-toggle="list"
-            >
-              <i class="fas fa-2x fa-user"></i>
-            </a>
-            <a
-              href="#tab-chats"
-              class="list-group-item list-group-item-action border-0"
-              data-toggle="list"
-            >
-              <i class="fas fa-2x fa-comment"></i>
-            </a>
-          </div>
-        </div>
+</head>
+<body>
+<div class="container-fluid flex-grow-1 d-flex ">
+    <div class="row flex-fill flex-sm-row ">
+
         <main class="col p-0">
-          <div class="tab-content">
-            <div class="tab-pane fade active show" id="tab-friends">
-              {% include 'chat-friend.html' %}
+            <div class="tab-content">
+                <div class="tab-pane fade active show" id="tab-friends">
+                    {% include 'chat-friend.html' %}
+                </div>
+                <div class="tab-pane fade" id="tab-chats">
+                    <h1>chats</h1>
+                    {% include 'chat-room.html' %}
+                </div>
             </div>
-            <div class="tab-pane fade" id="tab-chats">
-              <h1>chats</h1>
-              {% include 'chat-room.html' %}
-            </div>
-          </div>
         </main>
-      </div>
     </div>
-    <script>
-      socket = io.connect("http://" + document.domain + ":" + location.port);
-      socket.on("connect", () => {
+</div>
+<script>
+    socket = io.connect("http://" + document.domain + ":" + location.port);
+    socket.on("connect", () => {
         console.log("connected");
-      });
-    </script>
-  </body>
+    });
+</script>
+</body>
 </html>

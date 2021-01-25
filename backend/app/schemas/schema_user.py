@@ -16,6 +16,10 @@ user_schema = {
         "username":{
             "type": "string",
             "minLength": 1
+        },
+        "nickname": {
+            "type": "string",
+            "minLength": 1
         }
     },
     "required": ["email", "password", "username"],

@@ -10,14 +10,14 @@ friend_schema = {
         "requester": {
             "type": "object",
             "propoerties": {
-                "friend_id": {"type": "object_id"},
-                "username": {"type": "object_id"}
+                "username": {"type": "string"},
+                "nickname": {"type:" "string"}
             }},
         "subject": {
             "type": "object",
             "propoerties": {
-                "friend_id": {"type": "object_id"},
-                "username": {"type": "object_id"}
+                "username": {"type": "string"},
+                "nickname": {"type:" "string"}
             }},
         "status": {
             "type": "number",
@@ -37,14 +37,14 @@ new_friend_schema = {
         "requester": {
             "type": "object",
             "propoerties": {
-                "friend_id": {"type": "object_id"},
-                "username": {"type": "object_id"}
+                "username": {"type": "string"},
+                "nickname": {"type:" "string"}
             }},
         "subject": {
             "type": "object",
             "propoerties": {
-                "friend_id": {"type": "object_id"},
-                "username": {"type": "object_id"}
+                "username": {"type": "string"},
+                "nickname": {"type:" "string"}
             }}
     },
     "required": ["requester", "subject"],

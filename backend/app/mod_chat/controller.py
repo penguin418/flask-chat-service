@@ -1,4 +1,6 @@
 from flask import render_template, request, redirect, url_for, request
+from flask_restful import Resource
+
 from . import mod_chat
 from flask_socketio import emit, join_room, leave_room
 from .. import socketio as io

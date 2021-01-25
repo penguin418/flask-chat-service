@@ -51,8 +51,9 @@ def create_app(configs = [], debug=False):
 
     socketio.init_app(app)
 
-    from .mod_friend import FriendsAPI as friendsAPI
-    api.add_resource(friendsAPI, '/friends')
+    from .mod_friend import friends_list_api, friends_api
+    api.add_resource(friends_list_api, '/friends')
+    api.add_resource(friends_api, '/friends/<username>')
 
     return app
     

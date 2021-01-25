@@ -12,7 +12,8 @@ socketio = SocketIO()
 app = None
 api = None
 
-def create_app(configs = [], debug=False):
+
+def create_app(configs=[], debug=False):
     global app
     app = Flask(__name__)
     api = Api(app)
@@ -38,16 +39,15 @@ def create_app(configs = [], debug=False):
     @app.route('/')
     def index():
         return render_template('index.html')
-    
+
     from .mod_chat import mod_chat as chat
     app.register_blueprint(chat)
-    
+
     from .mod_auth import mod_auth as auth
     app.register_blueprint(auth)
 
     # from .mod_friend import mod_friend as friend
     # app.register_blueprint(friend)
-
 
     socketio.init_app(app)
 
@@ -56,5 +56,3 @@ def create_app(configs = [], debug=False):
     api.add_resource(friends_api, '/friends/<username>')
 
     return app
-    
-    

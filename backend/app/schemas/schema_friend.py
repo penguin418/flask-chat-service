@@ -2,20 +2,18 @@ from jsonschema import validate
 from jsonschema.exceptions import ValidationError
 from jsonschema.exceptions import SchemaError
 
-
-
 friend_schema = {
     "type": "object",
     "properties": {
         "requester": {
             "type": "object",
-            "propoerties": {
+            "properties": {
                 "username": {"type": "string"},
                 "nickname": {"type:" "string"}
             }},
         "subject": {
             "type": "object",
-            "propoerties": {
+            "properties": {
                 "username": {"type": "string"},
                 "nickname": {"type:" "string"}
             }},
@@ -23,7 +21,7 @@ friend_schema = {
             "type": "number",
             "enums": [
                 0,  # reference
-                1   # are friend
+                1  # are friend
             ]
         }
     },
@@ -36,13 +34,13 @@ new_friend_schema = {
     "properties": {
         "requester": {
             "type": "object",
-            "propoerties": {
+            "properties": {
                 "username": {"type": "string"},
                 "nickname": {"type:" "string"}
             }},
         "subject": {
             "type": "object",
-            "propoerties": {
+            "properties": {
                 "username": {"type": "string"},
                 "nickname": {"type:" "string"}
             }}

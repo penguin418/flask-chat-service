@@ -18,50 +18,38 @@ from bson.json_util import dumps
 from bson.json_util import loads
 from bson import json_util
 
+from ..utils.error_handler import request_should_be_json, request_does_not_match_expected_format
 
-class FriendsAPI(Resource):
 
-    # @jwt_required
+class FriendsListApi(Resource):
+    @jwt_required
     def get(self):
-        """
-        username 존재하는 경우 해당 user가 존재하는지 알려줌
-        그렇지 않으면 친구 목록을 돌려줌
-        """
-        username = request.args.get('username')
-        if username:
-            result = { 'username': username, 'exist': False }
+        identity = get_jwt_identity()
+        cursor = app.db['friends'].find(
+            {'requester.friend_id': identity['username']},
+            {"_id": 0, "subject": 1}
+        )
+        friends = [cur for cur in cursor]
+        res = jsonify({'friends': friends})
+        if not len(friends):
+            return make_response(res, 200)
+        return make_response(res, 200)
 
-            candidate = app.db['users'].find_one({'username': username})
-            if candidate:
-                result['id'] = str(candidate['_id'])
-                result['exist'] = True
-                return make_response(jsonify(result), 200)
-            else:
-                return jsonify(result), 404
-        else:
-            identity = get_jwt_identity()
-            cursor = app.db['friends'].find({'requester.friend_id': identity['id'] }, {"_id":0,"subject":1})
-            friends = [cur for cur in cursor]
-            print(friends)
-            if not len(friends):
-                return make_response(jsonify({'friends':friends}), 200)
-            return make_response(jsonify({'friends':friends}), 200)
-
-    # @jwt_required
+    @jwt_required
     def post(self):
         """
         친구 추가
         :return:
         """
-        print(request.is_json)
-        print(request.get_data())
         if not request.is_json:
-            return make_response(jsonify({"error": "요청은 json이어야 합니다 request should be JSON"}), 400)
-        print(3)
+            return request_should_be_json()
+
         success, data = validate_new_friend(request.get_json())
-        print(4)
         if not success:
-            return make_response(jsonify({"login": False, 'error': str(data)}), 400)
+            return request_does_not_match_expected_format(data)
+
+        if data['subject']['username'] == get_jwt_identity()['username']:
+            return make_response({'error': '자기 자신을 친구로 등록할 수 없습닏다 // cannot register yourself as a friend'})
 
         data['status'] = 0
         app.db['friends'].insert_one(data)
@@ -69,46 +57,33 @@ class FriendsAPI(Resource):
         return make_response(res, 200)
 
 
-# @mod_friend.route('/', methods=['GET'])
-# def friends_list():
-#     username = request.args.get('username')
-#     if username:
-#         result = { 'username': username, 'exist': False }
-#
-#         candidate = app.db['users'].find_one({'username': username})
-#         if candidate:
-#             result['exist'] = True
-#             return jsonify(result), 200
-#         else:
-#             return jsonify(result), 404
-#     else:
-#         identity = get_jwt_identity()
-#         friends = app.db['friends'].find({'requester.id': identity['id']})
-#         print(friends.explain())
-#         if not len(friends):
-#             return jsonify('frineds', []), 200
-#         return jsonify('friends', friends), 200
-#
-# @mod_friend.route('/new', methods=['POST'])
-# @jwt_required
-# def frined_add():
-#     identity = get_jwt_identity()
-#     # post 처리
-#     if not request.is_json:
-#         return jsonify({"error": "요청은 json이어야 합니다 // request should be JSON"}), 400  # Bad Request
-#
-#     success, data = validate_new_friend(request.get_json())
-#     if not success:
-#         return jsonify({'error': str(data)}), 400
-#
-#     app.db['friends'].insert_one()
-#     return res, 200
-#
-#
-# @mod_friend.route('/friends/delete', methods=['delete'])
-# @jwt_required
-# def friend_delete():
-#     identity = get_jwt_identity()
-#     print('identity', identity)
-#     res = jsonify({'delete', 200})
-#     return res, 200
+class FriendsAPI(Resource):
+
+    @jwt_required
+    def get(self, username):
+        """
+        username 존재하는 경우 해당 user가 존재하는지 알려줌
+        """
+        res = {'username': username, 'exist': False}
+
+        candidate = app.db['users'].find_one({'username': username})
+        if candidate:
+            res['id'] = str(candidate['_id'])
+            res['exist'] = True
+            return make_response(jsonify(res), 200)
+        else:
+            return jsonify(res), 404
+
+    @jwt_required
+    def delete(self, username):
+        """
+        친구 삭제
+        :return:
+        """
+
+        identity = get_jwt_identity()
+        app.db['friends'].delete_one(
+            {"register.username": identity['username'],
+             "subject.username": username}
+        )
+        return make_response('OK', 200)

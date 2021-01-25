@@ -13,7 +13,11 @@ user_schema = {
             "type": "string",
             "minLength": 1
         },
-        "username":{
+        "username": {
+            "type": "string",
+            "minLength": 1
+        },
+        "nickname": {
             "type": "string",
             "minLength": 1
         }
@@ -37,7 +41,6 @@ login_schema = {
     "required": ["email", "password"],
     "additionalProperties": False
 }
-
 
 
 def validate_user(data):

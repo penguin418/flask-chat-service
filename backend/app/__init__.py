@@ -55,4 +55,7 @@ def create_app(configs=[], debug=False):
     api.add_resource(friends_list_api, '/friends')
     api.add_resource(friends_api, '/friends/<username>')
 
+    from .mod_chat import chats_list_api, chats_api
+    api.add_resource(chats_list_api, '/chats')
+    api.add_resource(chats_api, '/chats/<room_id>')
     return app

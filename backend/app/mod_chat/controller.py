@@ -36,7 +36,6 @@ def leave(data):
 
 @io.on('send msg')
 def send_msg(data):
-    print(data)
     data['timestamp'] = time()
     emit(
         'broadcast msg',
@@ -50,7 +49,7 @@ def onDisconnect():
     print('disconnected')
 
 
-class ChatsList(Resource):
+class ChatsListAPI(Resource):
     @jwt_required
     def get(self):
         identity = get_jwt_identity()
@@ -80,7 +79,7 @@ class ChatsList(Resource):
         return make_response(res, 200)
 
 
-class Chats(Resource):
+class ChatsAPI(Resource):
     @jwt_required
     def get(self, room_id):
         res = {'room_id': room_id, 'exist': False}

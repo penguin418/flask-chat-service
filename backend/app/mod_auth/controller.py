@@ -46,7 +46,6 @@ def signup():
     if app.db['users'].find_one({'username': data['username']}):
         res = {"error": "이미 존재하는 유저이름입니다 // this username is already used"}
         return make_response(jsonify(res), 409)  # Conflict
-
     data['password'] = flask_bcrypt.generate_password_hash(data['password'])
     app.db['users'].insert_one(data)
     res = jsonify({'success': '등록되었습니다 // registered successfully!'})

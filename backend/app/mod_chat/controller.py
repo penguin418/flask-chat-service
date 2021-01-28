@@ -1,5 +1,8 @@
-from .. import socketio as io, app
 from . import mod_chat
+from .. import socketio as io, app
+from ..schemas.schema_chat import validate_new_chat
+from ..utils.error_handler import request_should_be_json, request_does_not_match_expected_format
+
 
 from flask import render_template, request, redirect, url_for, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity
@@ -7,9 +10,6 @@ from flask_restful import Resource
 from flask_socketio import emit, join_room, leave_room
 from time import time
 import secrets
-
-from ..schemas.schema_chat import validate_new_chat
-from ..utils.error_handler import request_should_be_json, request_does_not_match_expected_format
 
 authorized = ['1', '2', '3']
 

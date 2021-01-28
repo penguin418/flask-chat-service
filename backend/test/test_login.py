@@ -12,7 +12,7 @@ cov.start()
 app = None
 
 with open(
-        '../backend/config.json', 'r') as config_file:
+        '../config.json', 'r') as config_file:
     config = json.loads(config_file.read())
     app = create_app(configs=[config['COMMON'], config['TEST']])
     disconnected = None
@@ -48,6 +48,7 @@ class UnitTest(unittest.TestCase):
     def test_sign_up(self):
         # given
         user_info = {
+            'nickname': 'nickname',
             'email': 'good@emal.com',
             'username': 'name',
             'password': 'password'
@@ -62,6 +63,7 @@ class UnitTest(unittest.TestCase):
     def test_sign_up_bad_request(self):
         # given
         user_wrong_schema = {
+            'nickname': 'nickname',
             'email': 'wrong_schema@emal.com',
             'name': 'wrong_schema',
             'password': 'password'
@@ -76,6 +78,7 @@ class UnitTest(unittest.TestCase):
     def test_sign_up_conflict1(self):
         # given
         user_duplicate_email = {
+            'nickname': 'nickname',
             'email': 'dup_email@emal.com',
             'username': 'dup_email',
             'password': 'user_dup'
@@ -94,11 +97,13 @@ class UnitTest(unittest.TestCase):
     def test_sign_up_conflict2(self):
         # given
         user_duplicate_username1 = {
+            'nickname': 'nickname',
             'email': 'dup_username1@emal.com',
             'username': 'dup_username',
             'password': 'user_dup'
         }
         user_duplicate_username2 = {
+            'nickname': 'nickname',
             'email': 'dup_username2@emal.com',
             'username': 'dup_username',
             'password': 'user_dup'
@@ -125,6 +130,7 @@ class UnitTest(unittest.TestCase):
 
     def test_login(self):
         user_info = {
+            'nickname': 'nickname',
             'email': 'login@emal.com',
             'username': 'login',
             'password': 'password'
@@ -146,11 +152,13 @@ class UnitTest(unittest.TestCase):
 
     def test_logout(self):
         user_info = {
+            'nickname': 'nickname',
             'email': 'logout@emal.com',
             'username': 'logout',
             'password': 'password'
         }
         user_login = {
+            'nickname': 'nickname',
             'email': 'logout@emal.com',
             'password': 'password'
         }
@@ -163,6 +171,7 @@ class UnitTest(unittest.TestCase):
         # then
         status_code = response.__dict__['_status_code']
         self.assertEqual(200, status_code)
+
 
 if __name__ == '__main__':
     unittest.main()

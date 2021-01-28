@@ -1,7 +1,7 @@
 #!/bin/env python
 import pytest
 
-from app import create_app, socketio
+from backend.app import create_app, socketio
 from flask_socketio import SocketIO
 import json
 import unittest
@@ -11,7 +11,8 @@ cov = coverage.coverage(branch=True)
 cov.start()
 app = None
 
-with open('./config.json', 'r') as config_file:
+with open(
+        '../backend/config.json', 'r') as config_file:
     config = json.loads(config_file.read())
     app = create_app(configs=[config['COMMON'], config['TEST']])
     disconnected = None
@@ -24,7 +25,6 @@ class UnitTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        print(132123)
         app.db.drop_collection('users')
 
     def test_get_index(self):

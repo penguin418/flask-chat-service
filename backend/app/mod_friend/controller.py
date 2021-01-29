@@ -26,7 +26,7 @@ class FriendsListApi(Resource):
     def get(self):
         identity = get_jwt_identity()
         cursor = app.db['friends'].find(
-            {'requester.friend_id': identity['username']},
+            {'requester.username': identity['username']},
             {"_id": 0, "subject": 1}
         )
         friends = [cur for cur in cursor]

@@ -83,8 +83,8 @@ def login():
     res = jsonify({
         "login": True,
         'data': data,
-        'access_csrf': get_csrf_token(access_token),
-        'refresh_csrf': get_csrf_token(refresh_token)
+        # 'access_csrf': get_csrf_token(access_token),
+        # 'refresh_csrf': get_csrf_token(refresh_token)
     })
     set_access_cookies(res, access_token)
     set_refresh_cookies(res, refresh_token)

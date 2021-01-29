@@ -9,13 +9,13 @@ friend_schema = {
             "type": "object",
             "properties": {
                 "username": {"type": "string"},
-                "nickname": {"type:" "string"}
+                "nickname": {"type": "string"}
             }},
         "subject": {
             "type": "object",
             "properties": {
                 "username": {"type": "string"},
-                "nickname": {"type:" "string"}
+                "nickname": {"type": "string"}
             }},
         "status": {
             "type": "number",
@@ -36,13 +36,13 @@ new_friend_schema = {
             "type": "object",
             "properties": {
                 "username": {"type": "string"},
-                "nickname": {"type:" "string"}
+                "nickname": {"type": "string"}
             }},
         "subject": {
             "type": "object",
             "properties": {
                 "username": {"type": "string"},
-                "nickname": {"type:" "string"}
+                "nickname": {"type": "string"}
             }}
     },
     "required": ["requester", "subject"],

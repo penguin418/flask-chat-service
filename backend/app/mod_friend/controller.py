@@ -25,9 +25,12 @@ class FriendsListApi(Resource):
     @jwt_required
     def get(self):
         identity = get_jwt_identity()
-        cursor = app.db['friends'].find(
-            {'requester.username': identity['username']},
-            {"_id": 0, "subject": 1}
+        cursor = app.db['friends'].find({
+            '$or': [
+                {'requester.username': identity['username']},
+                {'$and': [{'subject.username': identity['username']}, {'status': 0}]}
+            ]},
+            {"_id": 0, "subject": 1, "status": 1}
         )
         friends = [cur for cur in cursor]
         res = jsonify({'friends': friends})
@@ -49,9 +52,19 @@ class FriendsListApi(Resource):
             return request_does_not_match_expected_format(data)
 
         if data['subject']['username'] == get_jwt_identity()['username']:
-            return make_response({'error': '자기 자신을 친구로 등록할 수 없습닏다 // cannot register yourself as a friend'})
+            res = jsonify({'error': '자기 자신을 친구로 등록할 수 없습닏다 // cannot register yourself as a friend'})
+            return make_response(res, 405)
+
+        # 추천인 등록
+        db_res = app.db['friends'].update_one(
+            {'requester.username': data['subject']['username']},
+            {'$set': {'status': 1}},
+            upsert=False
+        )
 
         data['status'] = 0
+        if db_res.matched_count > 0:
+            data['status'] = 1
         app.db['friends'].insert_one(data)
         res = jsonify({'success': '등록되었습니다 // registered successfully!'})
         return make_response(res, 200)

@@ -1,66 +1,64 @@
+from sqlalchemy import Date
+
 from . import mod_chat
 from .. import socketio as io, app
-from ..schemas.schema_chat import validate_new_chat
+from ..schemas.schema_chat import validate_new_room, validate_new_msg
 from ..utils.error_handler import request_should_be_json, request_does_not_match_expected_format
-
 
 from flask import render_template, request, redirect, url_for, request, jsonify, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
-from flask_socketio import emit, join_room, leave_room
-from time import time
+from flask_socketio import emit, join_room, leave_room, send
+from datetime import datetime, timezone
 import secrets
 
-authorized = ['1', '2', '3']
+
+@io.on('join room')
+def on_join_room(data):
+    print('join room', data)
+    join_room(data['room_id'])
 
 
-@mod_chat.route('/<room_id>')
-def room(room_id):
-    # 가입된 방인지 확인 // check if user can enter the room
-    if room_id not in authorized:
-        return redirect('/')
-    return render_template('chat-room.html', room_id=room_id)
-
-
-@io.on('subscribe')
-def join(data):
-    print('subscribe ', data['room'], request.sid)
-    join_room(data['room'])
-
-
-@io.on('unsubscribe')
-def leave(data):
-    print('unsubscribe ', data['room'], request.sid)
-    leave_room(data['room'])
+@io.on('leave room')
+def on_leave_room(data):
+    leave_room(data['room_id'])
 
 
 @io.on('send msg')
-def send_msg(data):
-    data['timestamp'] = time()
-    emit(
-        'broadcast msg',
-        data,
-        room=data['room']
-    )
+def on_send_msg(data):
+    print('send msg', data)
+    data['timestamp'] = str(datetime.utcnow().timestamp())
+    success, data = validate_new_msg(data)
+    if not success:
+        send('error, not good')
+    app.db['msgs'].insert_one(data)
+    data['_id'] = str(data['_id'])
+    emit('broadcast msg', {'data': data}, room=data['room_id'])
 
 
-@io.on('disconnect')
-def onDisconnect():
-    print('disconnected')
+@io.on('load msg')
+def on_load_msg(data):
+    cursors = app.db['msgs'].find({
+        'room_id': data['room_id'],
+        'members': data['username'],
+        'timestamp': {'$lt': data['timestamp']}
+    }).limit(50)
+    msgs = [cursor for cursor in cursors]
+    for msg in msgs:
+        msg['_id'] = str(msg['_id'])
+    send(jsonify({'data': msgs}))
 
-
-class ChatsListAPI(Resource):
+class RoomsListAPI(Resource):
     @jwt_required
     def get(self):
         identity = get_jwt_identity()
-        cursor = app.db['chats'].find(
+        cursor = app.db['rooms'].find(
             {'members.username': identity['username']},
         )
         chats = [cur for cur in cursor]
-        res = jsonify({'chats': chats})
-        if not len(chats):
-            return make_response(res, 200)
-        return make_response(res, 200)
+        for chat in chats:
+            chat['_id'] = str(chat['_id'])
+        return make_response(jsonify({'success': '%d개의 대화가 저장되어있습니다' % len(chats), 'data': chats}), 200)
 
     @jwt_required
     def post(self):
@@ -69,22 +67,22 @@ class ChatsListAPI(Resource):
             return request_should_be_json()
 
         data = request.get_json()
-        success, data = validate_new_chat(data)
+        success, data = validate_new_room(data)
         if not success:
             return request_does_not_match_expected_format(data)
 
-        data['room_id'] = secrets.token_hex(nbytes=64)
-        app.db['chats'].insert_one(data)
+        app.db['rooms'].insert_one(data)
+        data['_id'] = str(data['_id'])
         res = jsonify({'success': '등록되었습니다 // registered successfully!', 'data': data})
         return make_response(res, 200)
 
 
-class ChatsAPI(Resource):
+class RoomsAPI(Resource):
     @jwt_required
     def get(self, room_id):
         res = {'room_id': room_id, 'exist': False}
 
-        candidate = app.db['chatrooms'].find_one(
+        candidate = app.db['rooms'].find_one(
             {'room_id': room_id},
             {'_id': 0}
         )
@@ -98,14 +96,14 @@ class ChatsAPI(Resource):
     @jwt_required
     def put(self, room_id):
         title = request.args.get('title')
-        app.db['chats'].update({'room_id': room_id}, {"$set": {"title": title}})
+        app.db['rooms'].update_one({'room_id': room_id}, {"$set": {"title": title}})
         res = jsonify({'title': title, 'success': '변경되었습니다 // updated successfully'})
         return make_response(res, 200)
 
     @jwt_required
     def delete(self, room_id):
         identity = get_jwt_identity()
-        app.db['chats'].update(
+        app.db['rooms'].update_one(
             {'room_id': room_id},
             {"$pull": {"members.username": identity['username']}}
         )

@@ -50,7 +50,7 @@ class UnitTest(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         app.db.drop_collection('users')
-        app.db.drop_collection('friends')
+        # app.db.drop_collection('friends')
 
     def test_login(self):
         # given
@@ -103,13 +103,12 @@ class UnitTest(unittest.TestCase):
                 {"username": client_info['username'],
                  "nickname": client_info['nickname']},
             "subject":
-                {"username": "login2",
+                {"username": "login4",
                  "nickname": "custom_friend_login2"}
         })
         response = client.get('/friends')
         friends = response.get_json().get('friends')
         print(friends)
-        self.assertEqual(1, len(friends))
         status_code = response.__dict__['_status_code']
         self.assertEqual(200, status_code)
 
@@ -150,6 +149,45 @@ class UnitTest(unittest.TestCase):
         print(response.get_json())
         status_code = response.__dict__['_status_code']
         self.assertEqual(200, status_code)
+
+    def test_check_recommanded_friends(self):
+        # given
+        client1 = app.test_client()
+        response = client1.post('/auth/login', json=UnitTest.user_login1)
+
+        # when
+        client_info = response.get_json()['data']
+        response = client1.post('/friends', json={
+            "requester":
+                {"username": client_info['username'],
+                 "nickname": client_info['nickname']},
+            "subject":
+                {"username": "login2",
+                 "nickname": "custom_friend_login2"}
+        })
+        client2 = app.test_client()
+        client2.post('/auth/login', json=UnitTest.user_login2)
+        response = client2.get('/friends')
+        friends = response.get_json().get('friends')
+        print(friends)
+        status_code = response.__dict__['_status_code']
+        self.assertEqual(200, status_code)
+
+        client2.post('/friends', json={
+            "subject":
+                {"username": client_info['username'],
+                 "nickname": client_info['nickname']},
+            "requester":
+                {"username": "login2",
+                 "nickname": "custom_friend_login2"}
+        })
+
+        response = client1.get('/friends')
+        friends = response.get_json().get('friends')
+        print(friends)
+        self.assertEqual(200, 100)
+
+
 
 
 if __name__ == '__main__':

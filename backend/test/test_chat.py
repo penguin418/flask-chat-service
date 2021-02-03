@@ -141,7 +141,7 @@ class UnitTest(unittest.TestCase):
             "sender": "login1",
             'room_id': room_id,
             'msg': 'new message',
-            'members': list(map(lambda x: x['username'], room_info['members']))
+            'members': list(map(lambda x: {'username': x['username']}, room_info['members']))
         }
         socket_1.emit('send msg', msg)
         response = socket_1.get_received()
@@ -151,7 +151,7 @@ class UnitTest(unittest.TestCase):
         self.assertNotEqual(msg, received)
         del received['_id']
         del received['timestamp']
-        self.assertEqual(msg, received)
+        self.assertEqual(msg['msg'], received['msg'])
 
     def test_load_chat(self):
         # given
@@ -170,7 +170,7 @@ class UnitTest(unittest.TestCase):
             "sender": "login1",
             'room_id': room_id,
             'msg': 'new message',
-            'members': list(map(lambda x: x['username'], room_info['members']))
+            'members': list(map(lambda x: {'username': x['username']}, room_info['members']))
         }
         socket_1.emit('join room', {'room_id': room_id})
         socket_1.emit('send msg', msg)

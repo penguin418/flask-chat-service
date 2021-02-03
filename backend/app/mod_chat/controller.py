@@ -12,30 +12,43 @@ from flask_socketio import emit, join_room, leave_room, send
 from datetime import datetime, timezone
 import secrets
 
-
+@jwt_required
 @io.on('join room')
 def on_join_room(data):
     print('join room', data)
     join_room(data['room_id'])
 
 
+@jwt_required
 @io.on('leave room')
 def on_leave_room(data):
     leave_room(data['room_id'])
 
 
+@jwt_required
 @io.on('send msg')
 def on_send_msg(data):
-    print('send msg', data)
-    data['timestamp'] = str(datetime.utcnow().timestamp())
+    print(data)
     success, data = validate_new_msg(data)
     if not success:
-        send('error, not good')
+        send('request_does_not_match_expected_format')
+
+    data['timestamp'] = str(datetime.utcnow().timestamp())
+    for member in data['members']:
+        member['read'] = False
+        if member['username'] == data['sender']:
+            member['read'] = True
+
     app.db['msgs'].insert_one(data)
     data['_id'] = str(data['_id'])
     emit('broadcast msg', {'data': data}, room=data['room_id'])
 
+@jwt_required
+@io.on('flag read')
+def on_flag_read(data):
+    data['']
 
+@jwt_required
 @io.on('load msg')
 def on_load_msg(data):
     cursors = app.db['msgs'].find({

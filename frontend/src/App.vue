@@ -1,7 +1,15 @@
 <template>
   <div id="app">
+    <div>
+      <small>Raised</small>
+      <md-button class="md-raised">Default</md-button>
+      <md-button class="md-raised" :md-ripple="false">Ripple Off</md-button>
+      <md-button class="md-raised md-primary">Primary</md-button>
+      <md-button class="md-raised md-accent">Accent</md-button>
+      <md-button class="md-raised" disabled>Disabled</md-button>
+    </div>
     <div id="nav">
-      <router-link to="/">Home</router-link> |
+      <router-link to="/home">Home</router-link>
       <router-link to="/about">About</router-link>
     </div>
     <router-view/>

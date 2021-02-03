@@ -185,10 +185,13 @@ class UnitTest(unittest.TestCase):
         response = client1.get('/friends')
         friends = response.get_json().get('friends')
         print(friends)
-        self.assertEqual(200, 100)
+        status_code = response.__dict__['_status_code']
+        self.assertEqual(200, status_code)
 
 
-
-
-if __name__ == '__main__':
+def run_test():
     unittest.main()
+
+
+if __name__ == "__main__":
+    run_test()

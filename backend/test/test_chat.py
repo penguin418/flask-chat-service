@@ -1,13 +1,11 @@
 #!/bin/env python
-from datetime import datetime
-
-import pytest
-
-from backend.app import create_app, socketio
-from flask_socketio import SocketIO
 import json
 import unittest
+from datetime import datetime
+
 import coverage
+
+from backend.app import create_app, socketio
 
 cov = coverage.coverage(branch=True)
 cov.start()
@@ -190,5 +188,9 @@ class UnitTest(unittest.TestCase):
         print(received)
 
 
-if __name__ == "__main__":
+def run_test():
     unittest.main()
+
+
+if __name__ == "__main__":
+    run_test()

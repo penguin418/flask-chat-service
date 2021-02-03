@@ -173,5 +173,9 @@ class UnitTest(unittest.TestCase):
         self.assertEqual(200, status_code)
 
 
-if __name__ == '__main__':
+def run_test():
     unittest.main()
+
+
+if __name__ == "__main__":
+    run_test()

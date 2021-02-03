@@ -13,6 +13,7 @@
     "core-js": "^3.6.5",
     "vue": "^2.6.11",
     "vue-axios": "^3.2.4",
+    "vue-cookies": "^1.7.4",
     "vue-material": "^1.0.0-beta-15",
     "vue-router": "^3.2.0"
   },

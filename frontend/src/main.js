@@ -11,6 +11,7 @@ Vue.config.productionTip = false;
 
 Vue.use(VueMaterial);
 Vue.use(VueAxios, axios);
+Vue.use(require('vue-cookies'));
 
 new Vue({
   router,

@@ -38,3 +38,11 @@
   color: #42b983;
 }
 </style>
+<script>
+export default {
+  created() {
+    this.$cookies.config('1d');
+    this.$cookies.set('test', 'test-token');
+  },
+};
+</script>

@@ -1,7 +1,11 @@
 <template>
   <div id="app">
+    <div>
+      <small>Raised</small>
+      <md-button class="md-primary" @click="check()">Default</md-button>
+    </div>
     <div id="nav">
-      <router-link to="/">Home</router-link> |
+      <router-link to="/home">Home</router-link>
       <router-link to="/about">About</router-link>
     </div>
     <router-view/>
@@ -30,3 +34,24 @@
   color: #42b983;
 }
 </style>
+<script>
+export default {
+  created() {
+    this.$cookies.config('1d');
+    this.$cookies.set('test', 'test-token');
+    // eslint-disable-next-line no-undef
+    this.socket = io.connect('localhost:5555');
+  },
+  mounted() {
+    this.socket.on('connect', () => {
+      console.log('connected');
+    });
+  },
+  methods: {
+    check() {
+      console.log('check socketio');
+      this.socket.emit('start', { data: 'hello' });
+    },
+  },
+};
+</script>

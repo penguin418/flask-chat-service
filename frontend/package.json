@@ -9,9 +9,16 @@
     "develop": "vue-cli-service serve --mode dev --port 5000"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "socket.io-client": "^3.1.1",
     "vue": "^2.6.11",
-    "vue-router": "^3.2.0"
+    "vue-axios": "^3.2.4",
+    "vue-cookies": "^1.7.4",
+    "vue-material": "^1.0.0-beta-15",
+    "vue-router": "^3.2.0",
+    "vue-socket.io": "^3.0.10",
+    "vue-socket.io-extended": "^4.0.6"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.5.0",

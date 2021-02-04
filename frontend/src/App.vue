@@ -2,11 +2,7 @@
   <div id="app">
     <div>
       <small>Raised</small>
-      <md-button class="md-raised">Default</md-button>
-      <md-button class="md-raised" :md-ripple="false">Ripple Off</md-button>
-      <md-button class="md-raised md-primary">Primary</md-button>
-      <md-button class="md-raised md-accent">Accent</md-button>
-      <md-button class="md-raised" disabled>Disabled</md-button>
+      <md-button class="md-primary" @click="check()">Default</md-button>
     </div>
     <div id="nav">
       <router-link to="/home">Home</router-link>
@@ -43,6 +39,19 @@ export default {
   created() {
     this.$cookies.config('1d');
     this.$cookies.set('test', 'test-token');
+    // eslint-disable-next-line no-undef
+    this.socket = io.connect('localhost:5555');
+  },
+  mounted() {
+    this.socket.on('connect', () => {
+      console.log('connected');
+    });
+  },
+  methods: {
+    check() {
+      console.log('check socketio');
+      this.socket.emit('start', { data: 'hello' });
+    },
   },
 };
 </script>
